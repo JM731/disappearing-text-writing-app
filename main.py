@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (QApplication,
                              QLabel,
                              QProgressBar
                              )
-from PyQt6.QtCore import QTimer, Qt, pyqtSlot, pyqtSignal, QObject, QThread, QMutex
+from PyQt6.QtCore import QTimer, Qt, pyqtSlot, pyqtSignal, QObject, QThread
 from PyQt6.QtGui import QFont
 import time
 import random
@@ -42,7 +42,6 @@ class Worker(QObject):
     def __init__(self, ctrl):
         super().__init__()
         self.ctrl = ctrl
-        self.mutex = QMutex()
 
     @pyqtSlot(int)
     def do_work(self, max_value):
