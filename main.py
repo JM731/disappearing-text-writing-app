@@ -46,12 +46,14 @@ class Worker(QObject):
     @pyqtSlot(int)
     def do_work(self, max_value):
         self.ctrl['break'] = False
+        self.ctrl['finish'] = False
         for n in range(max_value):
             if self.ctrl['break']:
                 break
             time.sleep(0.1)
             if not self.ctrl['break']:
                 self.progress.emit(n + 1)
+        self.ctrl['finish'] = True
         self.finished.emit()
 
 
@@ -66,7 +68,7 @@ class Window(QMainWindow):
         self.write_timeout = 5
         self.hint = False
         self.started = False
-        self.ctrl = {'break': False}
+        self.ctrl = {'break': False, 'finish': False}
         self.current_stylesheet = set_stylesheet(0)
 
         self.setWindowTitle("Disappearing Text Writing App")
@@ -210,9 +212,10 @@ class Window(QMainWindow):
 
     def onTimeout3(self):
         self.active_timer.stop()
+        if not self.ctrl['finish']:
+            self.clearText()
+            self.text_entry.setEnabled(False)
         self.stopWorker()
-        self.clearText()
-        self.text_entry.setEnabled(False)
 
     def updateProgressBarValue(self, current_value):
         self.progress_bar.setValue(current_value)
